@@ -1,4 +1,5 @@
 // import 'package:expense_tracker_3/Statistics.dart';
+import 'package:expense_tracker/History.dart';
 import 'package:expense_tracker/widgets/Add.dart';
 import 'package:expense_tracker/widgets/profile.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class Bottom extends StatefulWidget {
 
 class _BottomState extends State<Bottom> {
   int index_color = 0;
-  List Screen = [HomePage(), StatisticsPage(), HomePage(), profile()];
+  List Screen = [HomePage(), StatisticsPage(), History(), profile()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

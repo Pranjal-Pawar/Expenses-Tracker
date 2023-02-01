@@ -1,3 +1,4 @@
+import 'package:expense_tracker/Authentication/Methods.dart';
 import 'package:expense_tracker/Authentication/SignUp.dart';
 import 'package:expense_tracker/utils/routes.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,15 +6,19 @@ import 'package:flutter/material.dart';
 
 import '../BottomBar.dart';
 class LogIn extends StatefulWidget {
-  const LogIn({Key? key}) : super(key: key);
+   LogIn({Key? key}) : super(key: key);
 
   @override
   State<LogIn> createState() => _LogInState();
 }
 
 class _LogInState extends State<LogIn> {
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
+    bool obs_text = true;
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -22,7 +27,7 @@ class _LogInState extends State<LogIn> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_outlined,
-            color: Colors.white,
+            color:  Color.fromARGB(255,54,137,131),
           ),
           onPressed: (){
             },
@@ -47,7 +52,9 @@ class _LogInState extends State<LogIn> {
         elevation: 0,
         backgroundColor: Color.fromARGB(255,54,137,131),
       ) ,
-      body:Padding(
+      body:isLoading
+        ?Center(child: Container(child: CircularProgressIndicator()))
+       :Padding(
         padding: EdgeInsets.all(15.0),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -72,14 +79,15 @@ class _LogInState extends State<LogIn> {
                     ),
 
                     TextField(
+                      controller: _email,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255,54,137,131),),
+                            color: Color.fromARGB(255,54,137,131),),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromARGB(255,54,137,131),),
+                            color: Color.fromARGB(255,54,137,131),),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(3),
@@ -97,7 +105,7 @@ class _LogInState extends State<LogIn> {
                       width: 25,
                     ),
                     TextField(
-
+                      controller: _password,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -129,7 +137,31 @@ class _LogInState extends State<LogIn> {
                         minimumSize: Size(100, 40),
                       ),
                       onPressed: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => Bottom()));
+                        if (_email.text.isNotEmpty &&
+                            _password.text.isNotEmpty) {
+                          setState(() {
+                            isLoading = true;
+                          });
+
+                          login(_email.text, _password.text)
+                              .then((user) {
+                            if (user != null) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => Bottom()));
+                            } else {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          });
+                        } else {
+                          print("please fill the form correctly");
+                        }
                       },
                       child:Text('Login'),
                     ),
@@ -144,8 +176,8 @@ class _LogInState extends State<LogIn> {
                         Text("Don't have an account?"),
                         GestureDetector(
                             onTap: () {
-                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUp()));
-                              },
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUp()));
+                            },
                             child: Container(
                                 alignment: Alignment.center,
                                 child: Text("Sign Up",
@@ -166,7 +198,6 @@ class _LogInState extends State<LogIn> {
           ),
         ),
       ),
-
     );
   }
 }
